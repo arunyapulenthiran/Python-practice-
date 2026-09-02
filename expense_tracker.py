@@ -1,9 +1,37 @@
+import json
+
+FILE_NAME = "expenses.json"
 expenses = []
+
+
+def load_expenses():
+    global expenses
+
+    try:
+        with open(FILE_NAME, "r") as file:
+            expenses = json.load(file)
+    except FileNotFoundError:
+        expenses = []
+
+
+def save_expenses():
+    with open(FILE_NAME, "w") as file:
+        json.dump(expenses, file, indent=4)
 
 
 def add_expense():
     category = input("Enter category: ")
-    amount = float(input("Enter amount: "))
+
+    try:
+        amount = float(input("Enter amount: "))
+
+        if amount <= 0:
+            print("Amount must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Please enter a valid number.")
+        return
 
     expense = {
         "category": category,
@@ -11,6 +39,8 @@ def add_expense():
     }
 
     expenses.append(expense)
+    save_expenses()
+
     print("Expense added successfully.")
 
 
@@ -36,6 +66,8 @@ def show_total():
 
 
 def main():
+    load_expenses()
+
     while True:
         print("\nPersonal Expense Tracker")
         print("-----------------------")
